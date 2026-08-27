@@ -56,8 +56,10 @@ tek bir sayı vermek yanlış olur.**
    bozuluyor. Sıralama taşınıyor, eşik taşınmıyor.
 2. **Merkez imzası renkte.** Karo başına 6 sayı, hangi hastaneden geldiğini %86
    doğrulukla biliyor — 27.648 pikselin yaptığı işin %91'i.
-3. **Ama kayıp renkten gelmiyor.** Rengi bozduk ve tamamen sildik; düşüş kapanmadı.
-   **Merkezin renkten ayırt edilebilir olması, kaybın renkten geldiği anlamına gelmez.**
+3. **Ama rengi silmek kaybı kapatmıyor.** Rengi bozduk ve tamamen sildik; düşüş
+   kapanmadı. Sebebi de ölçüldü: **renk silinse bile merkez %79 doğrulukla
+   tanınıyor** — imza hem renkte hem dokuda. Merkezin renkten ayırt edilebilir
+   olması, kaybın renkten geldiği anlamına gelmiyor.
 
 ---
 

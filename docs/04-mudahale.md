@@ -48,13 +48,22 @@ sıkışık kontrast aralığı modeli çökertiyor.
 > anlamına gelmez.**
 
 İki ayrı şey. Model hangi hastaneden geldiğini renge bakarak %86 doğrulukla
-biliyor. Ama tümör tespitinde dış merkezde kaybettiği şey renk değil: renk tamamen
-silindi, kayıp durmadı.
+biliyor. Ama rengi bozmak da silmek de kaybı kapatmadı.
 
 "Boya normalizasyonu yapın, kayma çözülür" bu alanda sıkça tekrarlanan bir tavsiye.
 Bu veride çalışmıyor, ve hangi merkezde ters teptiği ölçülmüş durumda.
 
-**Açık soru:** renk değilse ne? Aday sebepler doku ve morfoloji farkı, tarayıcı
-çözünürlüğü ve odak, hasta popülasyonu.
+### ⚠️ Bu hükmün sınırı (`07_teshis2.py` sonrası düzeltme)
+
+İlk yazımda buradan "kayıp renkten gelmiyor" sonucu çıkarılmıştı. Sonraki test bunu
+zayıflattı: **rengi silmek merkez imzasını silmiyor.** Gri görüntüden merkez tahmini
+hâlâ %79 (şans %20, renkli %94).
+
+Yani müdahale imzanın kaynağını ortadan kaldırmadı; kaybın kapanmaması bu yüzden
+sürpriz değil. Doğru ifade: **merkez imzası hem renkte hem dokuda, ve sadece rengi
+silmek yetmiyor.** Ayrıntı → [Teşhis, ikinci tur](03-teshis.md)
+
+**Açık soru:** doku imzasının hangi bileşeni kaybı üretiyor? Aday sebepler morfoloji
+farkı, tarayıcı çözünürlüğü ve odak, hasta popülasyonu.
 
 ---
