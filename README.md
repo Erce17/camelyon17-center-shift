@@ -60,6 +60,10 @@ tek bir sayı vermek yanlış olur.**
    kapanmadı. Sebebi de ölçüldü: **renk silinse bile merkez %79 doğrulukla
    tanınıyor** — imza hem renkte hem dokuda. Merkezin renkten ayırt edilebilir
    olması, kaybın renkten geldiği anlamına gelmiyor.
+4. **Kaybın yarısı ucuza geri alınabilir.** Hedef merkezden 50 etiketli örnekle
+   doğruluk kaybının %37'si, 200 örnekle %52'si geri geliyor — model yeniden
+   eğitilmeden, sadece karar eşiği taşınarak. **Kalan yarısı sıralamada kaybolmuş
+   durumda ve eşik ayarıyla geri gelmiyor.**
 
 ---
 
@@ -71,6 +75,7 @@ tek bir sayı vermek yanlış olur.**
 | [Ölçüm](docs/02-olcum.md) | Tasarım kararları ve gerekçeleri, pilotun yanlış sonucu ve nasıl bulunduğu |
 | [Teşhis](docs/03-teshis.md) | Renk istatistikleri, 6 sayıdan ve CNN'den merkez tahmini |
 | [Müdahale](docs/04-mudahale.md) | Renk artırma ve gri tonlama kolları, kat bazlı sonuçlar |
+| [Yeniden kalibrasyon](docs/05-kalibrasyon.md) | Hedef merkezden N etiketli örnekle kaybın ne kadarı geri gelir |
 
 ---
 
@@ -95,6 +100,8 @@ izle.sh      arka planda kosan mudahaleyi canli izler
 | `04_teshis.py` | Renk istatistikleri, 6 sayıdan ve CNN'den merkez tahmini |
 | `05_mudahale.py` | `--kol renk_artirma` / `--kol gri` |
 | `06_karsilastir.py` | Üç kolu yan yana koyar |
+| `07_teshis2.py` | Gri görüntüden merkez tahmini, odak ve keskinlik istatistikleri |
+| `08_kalibrasyon.py` | Hedef merkezden N örnekle eşik/olasılık yeniden ayarı |
 
 Model: ImageNet ön eğitimli ResNet-18, son katman tek çıkışlı, tüm ağ eğitiliyor.
 Aygıt: Apple MPS. Bir koşu ~111 saniye, 15 koşu ~28 dakika.
@@ -111,6 +118,8 @@ uv run scriptler/04_teshis.py
 uv run scriptler/05_mudahale.py --kol renk_artirma
 uv run scriptler/05_mudahale.py --kol gri
 uv run scriptler/06_karsilastir.py
+uv run scriptler/07_teshis2.py
+uv run scriptler/08_kalibrasyon.py
 ```
 
 Scriptler kök dizinden çalıştırılır; veri yollarıyla çıktı yolları buna göre kurulu.
