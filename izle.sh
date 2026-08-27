@@ -7,7 +7,7 @@ while true; do
   printf "=========================================================\n\n"
 
   for kol in renk mudahale_gri; do
-    [ "$kol" = "renk" ] && log="mudahale_renk.log" ad="RENK ARTIRMA" || { log="mudahale_gri.log"; ad="GRI TONLAMA"; }
+    [ "$kol" = "renk" ] && log="loglar/mudahale_renk.log" ad="RENK ARTIRMA" || { log="loglar/mudahale_gri.log"; ad="GRI TONLAMA"; }
     if [ -f "$log" ]; then
       bitti=$(grep -c "bitti" "$log")
       son=$(grep "toplam" "$log" | tail -1 | grep -oE "toplam [0-9.]+ dk")

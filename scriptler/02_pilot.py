@@ -157,7 +157,7 @@ for ad, d in [("ic dogrulama (0,3,4)", ic_dog),
           f"{m['duyarlilik_ozg90']:>10.4f} {m['brier']:>7.4f}")
     satirlar.append(dict(kume=ad, **m))
 
-pd.DataFrame(satirlar).to_csv("sonuc_pilot.csv", index=False)
+pd.DataFrame(satirlar).to_csv("sonuclar/sonuc_pilot.csv", index=False)
 ic = satirlar[0]["auc"]
 print(f"\nFARK (ic - dis test): {ic - satirlar[2]['auc']:+.4f} AUC")
 print("sonuc_pilot.csv yazildi")

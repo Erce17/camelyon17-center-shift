@@ -1,5 +1,5 @@
 """
-6. BLOK: MUDAHALE. Pilotun uc hatasini duzeltir.
+3. ADIM: TAM KOSU. Pilotun uc hatasini duzeltir.
 
 1. OLCUM KUMELERI ESITLENDI. Pilotta ic dogrulama 6 hastadan 2.612 karo,
    dis kumeler 8-9 hastadan 30.000 karoydu. Merkez kaymasiyla hasta kaymasi
@@ -13,22 +13,9 @@
 3. UC TOHUM. Camelyon17'de dis basarim tohumdan tohuma oynar. Tek sayi degil
    aralik raporlanir. Tohum hem hasta secimini hem model baslangicini etkiler.
 
-6. BLOK NOTU (05_mudahale.py):
-Blok 5 merkez imzasinin ezici kismini RENKTE buldu (6 sayi %86, CNN %94, sans %20).
-Bu script o teshisi test eder: rengi bozarsak ya da silersek dusus kuculur mu?
-
-  --kol renk_artirma : egitimde parlaklik/kontrast/doygunluk/ton rastgele oynatilir.
-                       Model renge guvenemez hale gelir. Olcum kumelerine UYGULANMAZ.
-  --kol gri          : renk tamamen silinir, sadece doku kalir. En keskin test.
-                       Girdi donusumu oldugu icin egitimde de olcumde de uygulanir.
-
-Karsilastirilabilirlik icin taban cizgisiyle (03_tam.py) ayni tohumlar, ayni hasta
-secimi, ayni butce. Tek degisen mudahale.
-
 Degismeyenler: model secimi IC dogrulamada, normalizasyon yalniz egitimden,
-her katta ayni egitim butcesi.
+taban cizgisinde renk artirma yok, her katta ayni egitim butcesi.
 """
-import argparse
 import time
 import numpy as np
 import pandas as pd
@@ -36,10 +23,6 @@ import torch
 import torch.nn as nn
 from sklearn.metrics import roc_auc_score, roc_curve, brier_score_loss
 from torchvision.models import resnet18, ResNet18_Weights
-
-_ap = argparse.ArgumentParser()
-_ap.add_argument("--kol", choices=["renk_artirma", "gri"], required=True)
-KOL = _ap.parse_args().kol
 
 TOHUMLAR = [42, 43, 44]
 MERKEZLER = [0, 1, 2, 3, 4]
@@ -51,7 +34,7 @@ TUR = 5
 YIGIN = 128
 
 aygit = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-print(f"aygit: {aygit} | KOL: {KOL}", flush=True)
+print(f"aygit: {aygit}", flush=True)
 
 X = np.load("veri/altkume/X.npy", mmap_mode="r")
 md = pd.read_parquet("veri/altkume/secim.parquet").reset_index(drop=True)
@@ -86,36 +69,15 @@ def olcum_kumesi(kaynak, hastalar, tohum):
     return pd.concat(parcalar), kullanilan
 
 
-def griye_cevir(x):
-    """ITU-R BT.601 luma. Uc kanal korunur ki ResNet girdisi degismesin."""
-    g = (0.299 * x[:, 0] + 0.587 * x[:, 1] + 0.114 * x[:, 2]).unsqueeze(1)
-    return g.expand(-1, 3, -1, -1)
-
-
-def renk_oynat(x):
-    """Parlaklik, kontrast, doygunluk ve ton. Yigin basina tek rastgele cekilis."""
-    x = x * (0.8 + 0.4 * torch.rand(1, device=x.device))                  # parlaklik
-    ort = x.mean(dim=(1, 2, 3), keepdim=True)
-    x = ort + (x - ort) * (0.8 + 0.4 * torch.rand(1, device=x.device))    # kontrast
-    gri = (0.299 * x[:, 0] + 0.587 * x[:, 1] + 0.114 * x[:, 2]).unsqueeze(1)
-    x = gri + (x - gri) * (0.7 + 0.6 * torch.rand(1, device=x.device))    # doygunluk
-    kayma = (torch.rand(3, 1, 1, device=x.device) - 0.5) * 0.10           # kanal bazli ton
-    return (x + kayma).clamp(0.0, 1.0)
-
-
 def yigin_getir(idxler, karistir, artir, ort_t, std_t):
     sira = np.random.permutation(len(idxler)) if karistir else np.arange(len(idxler))
     for i in range(0, len(sira), YIGIN):
         alt = np.sort(idxler[sira[i:i + YIGIN]])
         x = torch.from_numpy(np.asarray(X[alt]).copy()).to(aygit)
         x = x.permute(0, 3, 1, 2).contiguous().float().div_(255.0)
-        if KOL == "gri":               # girdi donusumu: her zaman, olcumde de
-            x = griye_cevir(x)
         if artir:
             if torch.rand(1).item() < 0.5: x = torch.flip(x, dims=[3])
             if torch.rand(1).item() < 0.5: x = torch.flip(x, dims=[2])
-            if KOL == "renk_artirma":  # artirma: YALNIZ egitimde
-                x = renk_oynat(x)
         yield (x - ort_t) / std_t, alt
 
 
@@ -171,9 +133,6 @@ def kosu(kat, tohum):
 
     # --- normalizasyon: SADECE egitim karolarindan ---
     ornek = np.asarray(X[np.sort(egitim.idx.values)[:5000]]).astype(np.float32) / 255.0
-    if KOL == "gri":   # normalizasyon mudahale sonrasi dagilimdan hesaplanmali
-        _l = 0.299 * ornek[..., 0] + 0.587 * ornek[..., 1] + 0.114 * ornek[..., 2]
-        ornek = np.repeat(_l[..., None], 3, axis=-1)
     ort_t = torch.tensor(ornek.mean(axis=(0, 1, 2)), device=aygit).view(1, 3, 1, 1)
     std_t = torch.tensor(ornek.std(axis=(0, 1, 2)), device=aygit).view(1, 3, 1, 1)
 
@@ -234,7 +193,7 @@ for kat in MERKEZLER:
         hepsi.append(kosu(kat, tohum))
         print(f"  [kosu {len(hepsi)}/15 bitti, {time.time()-ts:.0f} sn, "
               f"toplam {(time.time()-t0)/60:.1f} dk]", flush=True)
-        pd.concat(hepsi).to_csv(f"sonuc_{KOL}.csv", index=False)
+        pd.concat(hepsi).to_csv("sonuclar/sonuc_tam.csv", index=False)
 
 son = pd.concat(hepsi)
 print(f"\n{'='*74}\nOZET ({(time.time()-t0)/60:.1f} dakika)\n{'='*74}", flush=True)
@@ -253,4 +212,4 @@ for kat, g in p.groupby("kat"):
     print(f"  kat {kat} (dis test m{kat}): dusus {g.dusus.mean():+.4f} "
           f"[{g.dusus.min():+.4f}, {g.dusus.max():+.4f}]", flush=True)
 print(f"\nGENEL DUSUS: {p.dusus.mean():+.4f} +- {p.dusus.std():.4f} AUC", flush=True)
-print(f"\nsonuc_{KOL}.csv yazildi", flush=True)
+print("\nsonuc_tam.csv yazildi", flush=True)

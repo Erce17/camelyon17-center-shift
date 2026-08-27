@@ -143,5 +143,5 @@ print(f"sans 0.2000 | 6 sayi (renk) {acc_lr:.4f} | CNN (goruntu) {acc_cnn:.4f}")
 print(f"CNN'in renk uzerine kattigi: {acc_cnn - acc_lr:+.4f}")
 pd.DataFrame([dict(yontem="sans", dogruluk=0.2),
               dict(yontem="renk_6_sayi_lojistik", dogruluk=acc_lr),
-              dict(yontem="cnn_goruntu", dogruluk=acc_cnn)]).to_csv("sonuc_teshis.csv", index=False)
+              dict(yontem="cnn_goruntu", dogruluk=acc_cnn)]).to_csv("sonuclar/sonuc_teshis.csv", index=False)
 print("sonuc_teshis.csv yazildi")

@@ -8,9 +8,9 @@ Asil olcu DIS TEST mutlak basarimidir.
 import numpy as np
 import pandas as pd
 
-KOLLAR = [("taban cizgisi", "sonuc_tam.csv"),
-          ("renk artirma", "sonuc_renk_artirma.csv"),
-          ("gri tonlama", "sonuc_gri.csv")]
+KOLLAR = [("taban cizgisi", "sonuclar/sonuc_tam.csv"),
+          ("renk artirma", "sonuclar/sonuc_renk_artirma.csv"),
+          ("gri tonlama", "sonuclar/sonuc_gri.csv")]
 
 tablo, dususler = [], {}
 for ad, dosya in KOLLAR:
@@ -71,6 +71,6 @@ print("KAT BASINA DUSUS")
 print("=" * 92)
 kat = pd.DataFrame({ad: d.groupby(level="kat").mean() for ad, d in dususler.items()})
 print(kat.round(4).to_string())
-kat.to_csv("karsilastirma_kat.csv")
-t.to_csv("karsilastirma.csv", index=False)
+kat.to_csv("sonuclar/karsilastirma_kat.csv")
+t.to_csv("sonuclar/karsilastirma.csv", index=False)
 print("\nkarsilastirma.csv ve karsilastirma_kat.csv yazildi")
