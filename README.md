@@ -62,8 +62,11 @@ tek bir sayı vermek yanlış olur.**
    olması, kaybın renkten geldiği anlamına gelmiyor.
 4. **Kaybın yarısı ucuza geri alınabilir.** Hedef merkezden 50 etiketli örnekle
    doğruluk kaybının %37'si, 200 örnekle %52'si geri geliyor — model yeniden
-   eğitilmeden, sadece karar eşiği taşınarak. **Kalan yarısı sıralamada kaybolmuş
-   durumda ve eşik ayarıyla geri gelmiyor.**
+   eğitilmeden, sadece karar eşiği taşınarak.
+5. **Kalan yarısı için etiket bile gerekmiyor.** Hedef merkezin ~800 **etiketsiz**
+   karosuyla BatchNorm istatistiklerini güncellemek AUC açığının %67'sini,
+   kalibrasyon açığının **%98,7'sini** kapatıyor. Ama 100 karoyla denendiğinde
+   her metrikte zarar veriyor: **gürültülü istatistik, sağlam olandan beterdir.**
 
 ---
 
@@ -76,6 +79,7 @@ tek bir sayı vermek yanlış olur.**
 | [Teşhis](docs/03-teshis.md) | Renk istatistikleri, 6 sayıdan ve CNN'den merkez tahmini |
 | [Müdahale](docs/04-mudahale.md) | Renk artırma ve gri tonlama kolları, kat bazlı sonuçlar |
 | [Yeniden kalibrasyon](docs/05-kalibrasyon.md) | Hedef merkezden N etiketli örnekle kaybın ne kadarı geri gelir |
+| [Etiketsiz uyarlama](docs/06-etiketsiz-uyarlama.md) | BatchNorm istatistiklerini hedef merkeze taşımak, etiket kullanmadan |
 
 ---
 
@@ -102,6 +106,7 @@ izle.sh      arka planda kosan mudahaleyi canli izler
 | `06_karsilastir.py` | Üç kolu yan yana koyar |
 | `07_teshis2.py` | Gri görüntüden merkez tahmini, odak ve keskinlik istatistikleri |
 | `08_kalibrasyon.py` | Hedef merkezden N örnekle eşik/olasılık yeniden ayarı |
+| `09_bn_uyarlama.py` | Etiketsiz BatchNorm uyarlaması |
 
 Model: ImageNet ön eğitimli ResNet-18, son katman tek çıkışlı, tüm ağ eğitiliyor.
 Aygıt: Apple MPS. Bir koşu ~111 saniye, 15 koşu ~28 dakika.
@@ -120,6 +125,7 @@ uv run scriptler/05_mudahale.py --kol gri
 uv run scriptler/06_karsilastir.py
 uv run scriptler/07_teshis2.py
 uv run scriptler/08_kalibrasyon.py
+uv run scriptler/09_bn_uyarlama.py
 ```
 
 Scriptler kök dizinden çalıştırılır; veri yollarıyla çıktı yolları buna göre kurulu.

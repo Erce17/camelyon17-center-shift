@@ -1,0 +1,272 @@
+aygit: mps
+olcume uygun hasta sayisi (merkez basi): {0: 5, 1: 5, 2: 5, 3: 3, 4: 3}
+
+==========================================================================
+KAT 0 (dis test m0, dis dog m1, egitim m[2, 3, 4]) | TOHUM 42
+==========================================================================
+                egitim: 28,413 karo | 25 hasta
+    kalibrasyon havuzu:    800 karo |  4 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1202 | ic AUC 0.9263 dogruluk 0.7644
+  tur 2: kayip 0.0586 | ic AUC 0.9417 dogruluk 0.7844
+  tur 3: kayip 0.0424 | ic AUC 0.9544 dogruluk 0.8044
+  tur 4: kayip 0.0344 | ic AUC 0.9419 dogruluk 0.7956
+  tur 5: kayip 0.0285 | ic AUC 0.8944 dogruluk 0.7256
+  -> taban 0.8267 | esik200 0.8489 | bn100 0.7733 | bn_tam 0.9067 | bn_tam+esik 0.9411
+  [kosu 1/15 bitti, 112 sn, toplam 1.9 dk]
+
+==========================================================================
+KAT 0 (dis test m0, dis dog m1, egitim m[2, 3, 4]) | TOHUM 43
+==========================================================================
+                egitim: 27,291 karo | 25 hasta
+    kalibrasyon havuzu:    800 karo |  4 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1144 | ic AUC 0.9318 dogruluk 0.7978
+  tur 2: kayip 0.0500 | ic AUC 0.9319 dogruluk 0.7956
+  tur 3: kayip 0.0341 | ic AUC 0.9076 dogruluk 0.7889
+  tur 4: kayip 0.0288 | ic AUC 0.9293 dogruluk 0.7756
+  tur 5: kayip 0.0216 | ic AUC 0.8841 dogruluk 0.7378
+  -> taban 0.8244 | esik200 0.8311 | bn100 0.8233 | bn_tam 0.8911 | bn_tam+esik 0.9178
+  [kosu 2/15 bitti, 105 sn, toplam 3.6 dk]
+
+==========================================================================
+KAT 0 (dis test m0, dis dog m1, egitim m[2, 3, 4]) | TOHUM 44
+==========================================================================
+                egitim: 30,000 karo | 25 hasta
+    kalibrasyon havuzu:    800 karo |  4 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1275 | ic AUC 0.9889 dogruluk 0.9467
+  tur 2: kayip 0.0607 | ic AUC 0.9875 dogruluk 0.9489
+  tur 3: kayip 0.0430 | ic AUC 0.9871 dogruluk 0.9511
+  tur 4: kayip 0.0340 | ic AUC 0.9887 dogruluk 0.9444
+  tur 5: kayip 0.0250 | ic AUC 0.9901 dogruluk 0.9411
+  -> taban 0.8267 | esik200 0.8500 | bn100 0.8356 | bn_tam 0.8567 | bn_tam+esik 0.9256
+  [kosu 3/15 bitti, 118 sn, toplam 5.6 dk]
+
+==========================================================================
+KAT 1 (dis test m1, dis dog m2, egitim m[0, 3, 4]) | TOHUM 42
+==========================================================================
+                egitim: 28,413 karo | 23 hasta
+    kalibrasyon havuzu:    800 karo |  5 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1143 | ic AUC 0.9443 dogruluk 0.8378
+  tur 2: kayip 0.0540 | ic AUC 0.9776 dogruluk 0.8622
+  tur 3: kayip 0.0387 | ic AUC 0.9703 dogruluk 0.8744
+  tur 4: kayip 0.0303 | ic AUC 0.9731 dogruluk 0.8811
+  tur 5: kayip 0.0233 | ic AUC 0.9632 dogruluk 0.8967
+  -> taban 0.7722 | esik200 0.8900 | bn100 0.6078 | bn_tam 0.8133 | bn_tam+esik 0.8878
+  [kosu 4/15 bitti, 110 sn, toplam 7.4 dk]
+
+==========================================================================
+KAT 1 (dis test m1, dis dog m2, egitim m[0, 3, 4]) | TOHUM 43
+==========================================================================
+                egitim: 27,291 karo | 23 hasta
+    kalibrasyon havuzu:    800 karo |  5 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1164 | ic AUC 0.9692 dogruluk 0.8622
+  tur 2: kayip 0.0490 | ic AUC 0.9347 dogruluk 0.8289
+  tur 3: kayip 0.0361 | ic AUC 0.9660 dogruluk 0.8600
+  tur 4: kayip 0.0277 | ic AUC 0.9614 dogruluk 0.8389
+  tur 5: kayip 0.0227 | ic AUC 0.9447 dogruluk 0.8344
+  -> taban 0.8289 | esik200 0.8167 | bn100 0.7700 | bn_tam 0.7811 | bn_tam+esik 0.7600
+  [kosu 5/15 bitti, 209 sn, toplam 10.9 dk]
+
+==========================================================================
+KAT 1 (dis test m1, dis dog m2, egitim m[0, 3, 4]) | TOHUM 44
+==========================================================================
+                egitim: 30,000 karo | 23 hasta
+    kalibrasyon havuzu:    800 karo |  5 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1152 | ic AUC 0.9915 dogruluk 0.9578
+  tur 2: kayip 0.0559 | ic AUC 0.9893 dogruluk 0.9622
+  tur 3: kayip 0.0375 | ic AUC 0.9903 dogruluk 0.9578
+  tur 4: kayip 0.0308 | ic AUC 0.9910 dogruluk 0.9367
+  tur 5: kayip 0.0250 | ic AUC 0.9920 dogruluk 0.9656
+  -> taban 0.8122 | esik200 0.8922 | bn100 0.8389 | bn_tam 0.7156 | bn_tam+esik 0.8389
+  [kosu 6/15 bitti, 115 sn, toplam 12.8 dk]
+
+==========================================================================
+KAT 2 (dis test m2, dis dog m3, egitim m[0, 1, 4]) | TOHUM 42
+==========================================================================
+                egitim: 28,413 karo | 21 hasta
+    kalibrasyon havuzu:    800 karo |  6 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1227 | ic AUC 0.9720 dogruluk 0.8456
+  tur 2: kayip 0.0605 | ic AUC 0.9622 dogruluk 0.8322
+  tur 3: kayip 0.0445 | ic AUC 0.9598 dogruluk 0.8289
+  tur 4: kayip 0.0340 | ic AUC 0.9643 dogruluk 0.8378
+  tur 5: kayip 0.0259 | ic AUC 0.9533 dogruluk 0.8311
+  -> taban 0.8956 | esik200 0.8922 | bn100 0.8144 | bn_tam 0.8667 | bn_tam+esik 0.9000
+  [kosu 7/15 bitti, 117 sn, toplam 14.8 dk]
+
+==========================================================================
+KAT 2 (dis test m2, dis dog m3, egitim m[0, 1, 4]) | TOHUM 43
+==========================================================================
+                egitim: 28,413 karo | 21 hasta
+    kalibrasyon havuzu:    800 karo |  6 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1380 | ic AUC 0.9545 dogruluk 0.8311
+  tur 2: kayip 0.0645 | ic AUC 0.9640 dogruluk 0.8511
+  tur 3: kayip 0.0437 | ic AUC 0.9670 dogruluk 0.8422
+  tur 4: kayip 0.0335 | ic AUC 0.9640 dogruluk 0.8233
+  tur 5: kayip 0.0277 | ic AUC 0.9666 dogruluk 0.8322
+  -> taban 0.8522 | esik200 0.8544 | bn100 0.8367 | bn_tam 0.8589 | bn_tam+esik 0.9022
+  [kosu 8/15 bitti, 113 sn, toplam 16.7 dk]
+
+==========================================================================
+KAT 2 (dis test m2, dis dog m3, egitim m[0, 1, 4]) | TOHUM 44
+==========================================================================
+                egitim: 30,000 karo | 21 hasta
+    kalibrasyon havuzu:    800 karo |  6 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1239 | ic AUC 0.9842 dogruluk 0.9356
+  tur 2: kayip 0.0587 | ic AUC 0.9779 dogruluk 0.9156
+  tur 3: kayip 0.0415 | ic AUC 0.9766 dogruluk 0.8978
+  tur 4: kayip 0.0343 | ic AUC 0.9758 dogruluk 0.8911
+  tur 5: kayip 0.0266 | ic AUC 0.9752 dogruluk 0.9178
+  -> taban 0.7544 | esik200 0.8767 | bn100 0.8711 | bn_tam 0.9022 | bn_tam+esik 0.9311
+  [kosu 9/15 bitti, 118 sn, toplam 18.6 dk]
+
+==========================================================================
+KAT 3 (dis test m3, dis dog m4, egitim m[0, 1, 2]) | TOHUM 42
+==========================================================================
+                egitim: 30,000 karo | 21 hasta
+    kalibrasyon havuzu:    266 karo |  7 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1362 | ic AUC 0.9891 dogruluk 0.9378
+  tur 2: kayip 0.0681 | ic AUC 0.9876 dogruluk 0.9400
+  tur 3: kayip 0.0542 | ic AUC 0.9922 dogruluk 0.9444
+  tur 4: kayip 0.0368 | ic AUC 0.9884 dogruluk 0.9244
+  tur 5: kayip 0.0317 | ic AUC 0.9827 dogruluk 0.9211
+  -> taban 0.9289 | esik200 0.9278 | bn100 0.9200 | bn_tam 0.9200 | bn_tam+esik 0.8911
+  [kosu 10/15 bitti, 120 sn, toplam 20.6 dk]
+
+==========================================================================
+KAT 3 (dis test m3, dis dog m4, egitim m[0, 1, 2]) | TOHUM 43
+==========================================================================
+                egitim: 30,000 karo | 21 hasta
+    kalibrasyon havuzu:    266 karo |  7 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1490 | ic AUC 0.9648 dogruluk 0.8933
+  tur 2: kayip 0.0740 | ic AUC 0.9809 dogruluk 0.9178
+  tur 3: kayip 0.0506 | ic AUC 0.9607 dogruluk 0.8822
+  tur 4: kayip 0.0391 | ic AUC 0.9769 dogruluk 0.9089
+  tur 5: kayip 0.0336 | ic AUC 0.9524 dogruluk 0.8867
+  -> taban 0.9211 | esik200 0.9100 | bn100 0.9389 | bn_tam 0.9133 | bn_tam+esik 0.8889
+  [kosu 11/15 bitti, 119 sn, toplam 22.6 dk]
+
+==========================================================================
+KAT 3 (dis test m3, dis dog m4, egitim m[0, 1, 2]) | TOHUM 44
+==========================================================================
+                egitim: 30,000 karo | 21 hasta
+    kalibrasyon havuzu:    266 karo |  7 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1359 | ic AUC 0.9888 dogruluk 0.9244
+  tur 2: kayip 0.0650 | ic AUC 0.9854 dogruluk 0.9389
+  tur 3: kayip 0.0450 | ic AUC 0.9780 dogruluk 0.9067
+  tur 4: kayip 0.0357 | ic AUC 0.9817 dogruluk 0.9222
+  tur 5: kayip 0.0320 | ic AUC 0.9813 dogruluk 0.9244
+  -> taban 0.9056 | esik200 0.9244 | bn100 0.8833 | bn_tam 0.8856 | bn_tam+esik 0.8800
+  [kosu 12/15 bitti, 119 sn, toplam 24.6 dk]
+
+==========================================================================
+KAT 4 (dis test m4, dis dog m0, egitim m[1, 2, 3]) | TOHUM 42
+==========================================================================
+                egitim: 28,878 karo | 24 hasta
+    kalibrasyon havuzu:    286 karo |  6 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1250 | ic AUC 0.9883 dogruluk 0.9356
+  tur 2: kayip 0.0610 | ic AUC 0.9845 dogruluk 0.9211
+  tur 3: kayip 0.0440 | ic AUC 0.9811 dogruluk 0.9133
+  tur 4: kayip 0.0334 | ic AUC 0.9831 dogruluk 0.9333
+  tur 5: kayip 0.0261 | ic AUC 0.9826 dogruluk 0.8956
+  -> taban 0.8011 | esik200 0.8922 | bn100 0.8844 | bn_tam 0.8322 | bn_tam+esik 0.9300
+  [kosu 13/15 bitti, 114 sn, toplam 26.5 dk]
+
+==========================================================================
+KAT 4 (dis test m4, dis dog m0, egitim m[1, 2, 3]) | TOHUM 43
+==========================================================================
+                egitim: 28,878 karo | 24 hasta
+    kalibrasyon havuzu:    286 karo |  6 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1338 | ic AUC 0.9650 dogruluk 0.9122
+  tur 2: kayip 0.0623 | ic AUC 0.9675 dogruluk 0.9122
+  tur 3: kayip 0.0435 | ic AUC 0.9741 dogruluk 0.9233
+  tur 4: kayip 0.0354 | ic AUC 0.9672 dogruluk 0.9167
+  tur 5: kayip 0.0271 | ic AUC 0.9705 dogruluk 0.9067
+  -> taban 0.8600 | esik200 0.8944 | bn100 0.8711 | bn_tam 0.9089 | bn_tam+esik 0.9333
+  [kosu 14/15 bitti, 113 sn, toplam 28.4 dk]
+
+==========================================================================
+KAT 4 (dis test m4, dis dog m0, egitim m[1, 2, 3]) | TOHUM 44
+==========================================================================
+                egitim: 30,000 karo | 24 hasta
+    kalibrasyon havuzu:    286 karo |  6 hasta (olcumde KULLANILMAYAN)
+          ic dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+         dis dogrulama:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+              dis test:    900 karo |  3 hasta | tumor %50.0 | hasta basi [300, 300, 300]
+  tur 1: kayip 0.1333 | ic AUC 0.9242 dogruluk 0.8311
+  tur 2: kayip 0.0701 | ic AUC 0.9079 dogruluk 0.8167
+  tur 3: kayip 0.0511 | ic AUC 0.8747 dogruluk 0.8289
+  tur 4: kayip 0.0387 | ic AUC 0.9271 dogruluk 0.8433
+  tur 5: kayip 0.0327 | ic AUC 0.9134 dogruluk 0.8222
+  -> taban 0.8811 | esik200 0.8878 | bn100 0.8656 | bn_tam 0.8311 | bn_tam+esik 0.9411
+  [kosu 15/15 bitti, 118 sn, toplam 30.3 dk]
+
+====================================================================================
+OZET (30.3 dakika)
+====================================================================================
+
+ic dogrulama AUC (tavan referansi): 0.9726
+
+          kol   dis AUC  dogruluk  duy@ozg90    brier   etiket?
+        taban    0.9482    0.8461     0.8579   0.1248         -
+      esik200    0.9482    0.8793     0.8579   0.1248  200 adet
+        bn100    0.9194    0.8356     0.7836   0.2416       YOK
+       bn_tam    0.9646    0.8589     0.9067   0.0878       YOK
+  bn_tam+esik    0.9646    0.8979     0.9067   0.0878  200 adet
+
+          kol  AUC degisim  dogruluk degisim
+      esik200      +0.0000           +0.0332
+        bn100      -0.0289           -0.0104
+       bn_tam      +0.0163           +0.0128
+  bn_tam+esik      +0.0163           +0.0519
+
+kat basina dis AUC:
+kol   bn100  bn_tam  bn_tam+esik  esik200   taban
+kat                                              
+0    0.9054  0.9820       0.9820   0.9199  0.9199
+1    0.8388  0.9268       0.9268   0.9455  0.9455
+2    0.9230  0.9709       0.9709   0.9479  0.9479
+3    0.9708  0.9585       0.9585   0.9664  0.9664
+4    0.9589  0.9847       0.9847   0.9616  0.9616
+
+sonuclar/sonuc_bn.csv yazildi

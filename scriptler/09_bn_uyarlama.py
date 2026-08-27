@@ -1,26 +1,36 @@
 """
-7. BLOK: YENIDEN KALIBRASYON.
+8. BLOK: ETIKETSIZ UYARLAMA (BatchNorm).
 
-Blok 6 ve teshis ikinci turu su tabloyu birakti: dis merkezde AUC %2,5 kaybediliyor
-ama brier %43 bozuluyor. SIRALAMA tasiniyor, ESIK ve KALIBRASYON tasinmiyor.
+Blok 7 sonucu: dis merkezdeki dogruluk kaybinin yarisi SADECE esik tasiyarak geri
+geliyor. Kalan yarisi siralamanin kendisinde kaybolmus ve esik ayariyla gelmiyor.
 
-Bunun dogrudan ve test edilebilir bir sonucu var:
-  Hedef hastaneden AZ SAYIDA etiketli ornek alip sadece esigi/kalibrasyonu yeniden
-  ayarlarsak kaybin ne kadari geri gelir, ve N kac olmali?
+Bu script o kalan yariya dokunmayi dener, ve ETIKET KULLANMADAN.
 
-Model YENIDEN EGITILMEZ. Skorlarin uzerine bir donusum takilir, o kadar.
+Fikir: ResNet-18'in icinde 20 BatchNorm katmani var. Her biri kendinden onceki
+katmanin ciktisini normalize eder, ve kullandigi ortalama/varyans EGITIM
+VERISININ istatistikleridir. Model dis merkeze goturuldugunde iceride hala egitim
+hastanelerinin dagilimina gore normalize eder: yanlis zemin, ve hata her katmanda
+buyuyerek ilerler.
 
-SIZINTI KURALI: kalibrasyon karolari degerlendirme karolariyla AYNI HASTADAN olamaz.
-Kalibrasyon seti, dis merkezin olcum kumesine girmeyen hastalarindan cekilir. Aksi
-halde "yeni hastaneye uyarladim" derken test hastasi ezberlenir.
+Cozum: hedef merkezin ETIKETSIZ karolarini modelden bir kez gecir, BN'lerin
+biriktirdigi istatistikleri o merkeze gore yeniden hesapla. AGIRLIKLARA DOKUNMA.
+Ortalama ve varyans hesaplamak icin etikete ihtiyac yok -- sadece goruntuye.
 
-Uc yontem:
-  esik_ic  : ic dogrulamada ozgulluk 0,90 veren esik (sahadaki varsayilan durum)
-  esik_dis : dis kalibrasyon setinden N ornekle bulunan esik
-  platt    : N ornekle egitilen tek degiskenli lojistik regresyon (olasilik duzeltme)
+Neden bu veride isleme sansi yuksek: WILDS'ta tumor orani bes merkezde de %50.
+Yani SAF KOVARYAT KAYMASI var, etiket kaymasi yok. BN uyarlamasi tam bu duruma
+gore tasarlanmis bir sey.
 
-AUC raporlanmaz: monoton donusumler AUC'yi degistirmez ve kaybin AUC'de olmadigini
-zaten biliyoruz.
+AUC bu blokta RAPORLANIR: esik ayari siralamayi degistiremezdi, BN uyarlamasi
+degistirebilir. Ilk kez agin cikisina degil ICINE dokunuyoruz.
+
+Kollar:
+  taban        : uyarlamasiz, esik ic dogrulamadan (sahadaki varsayilan)
+  esik200      : esik dis merkezden 200 ETIKETLI ornekle (Blok 7'nin en iyisi)
+  bn100        : BN uyarlamasi, 100 ETIKETSIZ karo
+  bn_tam       : BN uyarlamasi, havuzun tamami (etiketsiz)
+  bn_tam+esik  : ikisi birden
+
+SIZINTI KURALI: uyarlama ve kalibrasyon karolari, olcum yapilan hastalardan olamaz.
 """
 import time
 import numpy as np
@@ -36,7 +46,9 @@ MERKEZLER = [0, 1, 2, 3, 4]
 MERKEZ_BASI = 10_000        # egitim butcesi, her katta sabit
 IC_DOGRULAMA_HASTA = 1      # her egitim merkezinden ayrilir -> 3 hasta
 OLCUM_HASTA = 3             # her olcum kumesinde hasta sayisi (esitleme)
-KALIBRASYON_N = [20, 50, 100, 200, 400]   # dis merkezden alinan etiketli karo sayisi
+KALIBRASYON_N = 200          # Blok 7'nin en iyi noktasi
+BN_KARO = 100                # etiketsiz uyarlama icin kucuk kume
+HAVUZ_TAVAN = 800            # kalibrasyon/uyarlama havuzunun ust siniri
 HASTA_BASI_SINIF = 150      # hasta basina her siniftan karo -> hasta basi 300
 TUR = 5
 YIGIN = 128
@@ -89,6 +101,21 @@ def yigin_getir(idxler, karistir, artir, ort_t, std_t):
         yield (x - ort_t) / std_t, alt
 
 
+def bn_uyarla(model, idxler, ort_t, std_t):
+    """Hedef merkezin ETIKETSIZ karolariyla BN istatistiklerini yeniden hesaplar.
+    Agirliklar degismez: opt.step() yok, gradyan yok."""
+    for m in model.modules():
+        if isinstance(m, nn.BatchNorm2d):
+            m.reset_running_stats()
+            m.momentum = None          # kumulatif ortalama, tek gecis yeter
+    model.train()
+    with torch.no_grad():
+        for x, _ in yigin_getir(idxler, False, False, ort_t, std_t):
+            model(x)                   # etiket hic kullanilmiyor
+    model.eval()
+    return model
+
+
 def esik_bul(skor, y, ozgulluk_hedef=0.90):
     """Verilen kumede istenen ozgullugu saglayan en dusuk esik."""
     negatif = np.sort(skor[y == 0])
@@ -135,7 +162,7 @@ def kosu(kat, tohum):
                       if int(h) not in olcum_hastalari[dis_test]]
     kh = kaynak_dt[kaynak_dt.patient.isin(kalib_hastalar)]
     _t, _n = kh[kh.label == 1], kh[kh.label == 0]
-    _k = min(len(_t), len(_n), max(KALIBRASYON_N))
+    _k = min(len(_t), len(_n), HAVUZ_TAVAN // 2)
     kalib_havuz = (pd.concat([_t.sample(n=_k, random_state=tohum),
                               _n.sample(n=_k, random_state=tohum)])
                    if _k > 0 else kh.iloc[0:0])
@@ -173,12 +200,12 @@ def kosu(kat, tohum):
     kayip_fn = nn.BCEWithLogitsLoss()
     opt = torch.optim.Adam(model.parameters(), lr=1e-4, weight_decay=1e-4)
 
-    def skorla(d):
-        model.eval(); skor = np.zeros(len(d), dtype=np.float32)
+    def skorla_ile(model_, d):
+        model_.eval(); skor = np.zeros(len(d), dtype=np.float32)
         yer = {v: i for i, v in enumerate(d.idx.values)}
         with torch.no_grad():
             for x, alt in yigin_getir(d.idx.values, False, False, ort_t, std_t):
-                p = torch.sigmoid(model(x)).squeeze(1).cpu().numpy()
+                p = torch.sigmoid(model_(x)).squeeze(1).cpu().numpy()
                 for j, a in enumerate(alt): skor[yer[a]] = p[j]
         return skor, d.label.values
 
@@ -192,7 +219,7 @@ def kosu(kat, tohum):
             kayip = kayip_fn(model(x).squeeze(1), y)
             kayip.backward(); opt.step()
             toplam += kayip.item() * len(alt); n += len(alt)
-        s, y = skorla(ic_dog); m = olc(s, y)
+        s, y = skorla_ile(model, ic_dog); m = olc(s, y)
         print(f"  tur {tur}: kayip {toplam/n:.4f} | ic AUC {m['auc']:.4f} "
               f"dogruluk {m['dogruluk']:.4f}", flush=True)
         if m["auc"] > en_iyi:   # model secimi IC dogrulamada
@@ -200,55 +227,52 @@ def kosu(kat, tohum):
             en_iyi_durum = {k: v.detach().clone() for k, v in model.state_dict().items()}
 
     model.load_state_dict(en_iyi_durum)
-    s_ic, y_ic = skorla(ic_dog)
-    s_dt, y_dt = skorla(dis["dis_test"][0])
+    temiz_durum = {k: v.detach().clone() for k, v in model.state_dict().items()}
+    dt = dis["dis_test"][0]
 
-    # sahadaki varsayilan: esik IC dogrulamada secilir
-    esik_ic = esik_bul(s_ic, y_ic)
-    ic_ol = olc(s_ic, y_ic, esik_ic)
-    tavan = ic_ol["dogruluk"]                       # ulasilabilecek en iyi (ic)
-    taban = olc(s_dt, y_dt, esik_ic)["dogruluk"]    # mudahalesiz dis
-    taban_brier = brier_score_loss(y_dt, s_dt)
+    def deger(ad, model_):
+        s_ic, y_ic = skorla_ile(model_, ic_dog)
+        s_dt, y_dt = skorla_ile(model_, dt)
+        e = esik_bul(s_ic, y_ic)                     # esik IC dogrulamadan
+        m = olc(s_dt, y_dt, e)
+        return dict(kat=kat, tohum=tohum, dis_test_merkez=dis_test, kol=ad,
+                    ic_auc=roc_auc_score(y_ic, s_ic), **m), (s_dt, y_dt)
 
-    satirlar = [dict(kat=kat, tohum=tohum, dis_test_merkez=dis_test, yontem="ic_tavan",
-                     n=0, dogruluk=tavan, brier=brier_score_loss(y_ic, s_ic),
-                     duyarlilik=olc(s_ic, y_ic, esik_ic)["duyarlilik_ozg90"]),
-                dict(kat=kat, tohum=tohum, dis_test_merkez=dis_test, yontem="esik_ic",
-                     n=0, dogruluk=taban, brier=taban_brier,
-                     duyarlilik=olc(s_dt, y_dt, esik_ic)["duyarlilik_ozg90"])]
+    satirlar = []
+    r, (s_dt, y_dt) = deger("taban", model); satirlar.append(r)
+    taban_dog = r["dogruluk"]
 
+    # --- esik200: dis merkezden ETIKETLI 200 ornek (Blok 7) ---
     if len(kalib_havuz) > 0:
-        s_kal_tum, y_kal_tum = skorla(kalib_havuz)
-        for N in KALIBRASYON_N:
-            n_al = min(N // 2, len(s_kal_tum) // 2)
-            if n_al < 2:
-                continue
-            poz = np.where(y_kal_tum == 1)[0][:n_al]
-            neg = np.where(y_kal_tum == 0)[0][:n_al]
-            sec = np.concatenate([poz, neg])
-            sk, yk = s_kal_tum[sec], y_kal_tum[sec]
+        s_kal, y_kal = skorla_ile(model, kalib_havuz)
+        n_al = min(KALIBRASYON_N // 2, len(s_kal) // 2)
+        poz = np.where(y_kal == 1)[0][:n_al]; neg = np.where(y_kal == 0)[0][:n_al]
+        sec = np.concatenate([poz, neg])
+        e_dis = esik_bul(s_kal[sec], y_kal[sec])
+        m = olc(s_dt, y_dt, e_dis)
+        satirlar.append(dict(kat=kat, tohum=tohum, dis_test_merkez=dis_test,
+                             kol="esik200", ic_auc=np.nan, **m))
 
-            e_dis = esik_bul(sk, yk)
+    # --- BN uyarlamasi: ETIKETSIZ ---
+    for ad, n_karo in [("bn100", BN_KARO), ("bn_tam", len(kalib_havuz))]:
+        if len(kalib_havuz) < 10:
+            continue
+        model.load_state_dict(temiz_durum)
+        idx_uy = kalib_havuz.idx.values[:n_karo]
+        bn_uyarla(model, idx_uy, ort_t, std_t)
+        r2, (s2, y2) = deger(ad, model)
+        satirlar.append(r2)
+        if ad == "bn_tam":
+            s_k2, y_k2 = skorla_ile(model, kalib_havuz)
+            e2 = esik_bul(s_k2[sec], y_k2[sec]) if len(kalib_havuz) > 0 else 0.5
+            m2 = olc(s2, y2, e2)
             satirlar.append(dict(kat=kat, tohum=tohum, dis_test_merkez=dis_test,
-                                 yontem="esik_dis", n=len(sec),
-                                 dogruluk=olc(s_dt, y_dt, e_dis)["dogruluk"],
-                                 brier=taban_brier,
-                                 duyarlilik=olc(s_dt, y_dt, e_dis)["duyarlilik_ozg90"]))
-
-            if len(np.unique(yk)) == 2:
-                pl = LogisticRegression(max_iter=1000).fit(sk.reshape(-1, 1), yk)
-                s_pl = pl.predict_proba(s_dt.reshape(-1, 1))[:, 1]
-                e_pl = esik_bul(pl.predict_proba(sk.reshape(-1, 1))[:, 1], yk)
-                satirlar.append(dict(kat=kat, tohum=tohum, dis_test_merkez=dis_test,
-                                     yontem="platt", n=len(sec),
-                                     dogruluk=olc(s_pl, y_dt, e_pl)["dogruluk"],
-                                     brier=brier_score_loss(y_dt, s_pl),
-                                     duyarlilik=olc(s_pl, y_dt, e_pl)["duyarlilik_ozg90"]))
+                                 kol="bn_tam+esik", ic_auc=np.nan, **m2))
+    model.load_state_dict(temiz_durum)
 
     df = pd.DataFrame(satirlar)
-    en_iyi_n = df[df.yontem == "platt"].dogruluk.max() if (df.yontem == "platt").any() else np.nan
-    print(f"  -> ic tavan {tavan:.4f} | dis taban {taban:.4f} | "
-          f"platt en iyi {en_iyi_n:.4f} | acik {tavan - taban:+.4f}", flush=True)
+    ozet = " | ".join(f"{r.kol} {r.dogruluk:.4f}" for r in df.itertuples())
+    print(f"  -> {ozet}", flush=True)
     return df
 
 
@@ -260,30 +284,34 @@ for kat in MERKEZLER:
         hepsi.append(kosu(kat, tohum))
         print(f"  [kosu {len(hepsi)}/15 bitti, {time.time()-ts:.0f} sn, "
               f"toplam {(time.time()-t0)/60:.1f} dk]", flush=True)
-        pd.concat(hepsi).to_csv("sonuclar/sonuc_kalibrasyon.csv", index=False)
+        pd.concat(hepsi).to_csv("sonuclar/sonuc_bn.csv", index=False)
 
 son = pd.concat(hepsi)
-son.to_csv("sonuclar/sonuc_kalibrasyon.csv", index=False)
-print(f"\n{'='*74}\nOZET ({(time.time()-t0)/60:.1f} dakika)\n{'='*74}", flush=True)
+son.to_csv("sonuclar/sonuc_bn.csv", index=False)
+print(f"\n{'='*84}\nOZET ({(time.time()-t0)/60:.1f} dakika)\n{'='*84}", flush=True)
 
-tavan = son[son.yontem == "ic_tavan"].dogruluk.mean()
-taban = son[son.yontem == "esik_ic"].dogruluk.mean()
-acik = tavan - taban
-print(f"\nic tavan (dogruluk)      : {tavan:.4f}")
-print(f"dis taban (mudahalesiz)  : {taban:.4f}")
-print(f"KAPATILACAK ACIK         : {acik:+.4f}\n")
+tavan = son[son.kol == "taban"].ic_auc.mean()
+tb = son[son.kol == "taban"]
+print(f"\nic dogrulama AUC (tavan referansi): {tavan:.4f}\n")
+print(f"{'kol':>13} {'dis AUC':>9} {'dogruluk':>9} {'duy@ozg90':>10} {'brier':>8}  {'etiket?':>8}")
+etiket = {"taban": "-", "esik200": "200 adet", "bn100": "YOK", "bn_tam": "YOK",
+          "bn_tam+esik": "200 adet"}
+for kol in ["taban", "esik200", "bn100", "bn_tam", "bn_tam+esik"]:
+    g = son[son.kol == kol]
+    if len(g) == 0:
+        continue
+    print(f"{kol:>13} {g.auc.mean():>9.4f} {g.dogruluk.mean():>9.4f} "
+          f"{g.duyarlilik_ozg90.mean():>10.4f} {g.brier.mean():>8.4f}  {etiket[kol]:>8}")
 
-print(f"{'yontem':>10} {'N':>5} {'dogruluk':>9} {'kapanan acik':>13} {'brier':>8} {'duyarlilik':>11}")
-for yontem in ["esik_dis", "platt"]:
-    for N in KALIBRASYON_N:
-        g = son[(son.yontem == yontem) & (son.n == N)]
-        if len(g) == 0:
-            continue
-        d = g.dogruluk.mean()
-        pay = (d - taban) / acik * 100 if abs(acik) > 1e-9 else float("nan")
-        print(f"{yontem:>10} {N:>5} {d:>9.4f} {pay:>12.1f}% {g.brier.mean():>8.4f} "
-              f"{g.duyarlilik.mean():>11.4f}")
+t_auc = tb.auc.mean(); t_dog = tb.dogruluk.mean()
+print(f"\n{'kol':>13} {'AUC degisim':>12} {'dogruluk degisim':>17}")
+for kol in ["esik200", "bn100", "bn_tam", "bn_tam+esik"]:
+    g = son[son.kol == kol]
+    if len(g) == 0:
+        continue
+    print(f"{kol:>13} {g.auc.mean()-t_auc:>+12.4f} {g.dogruluk.mean()-t_dog:>+17.4f}")
 
-print(f"\nreferans: mudahalesiz brier {son[son.yontem=='esik_ic'].brier.mean():.4f} "
-      f"| ic brier {son[son.yontem=='ic_tavan'].brier.mean():.4f}")
-print("\nsonuclar/sonuc_kalibrasyon.csv yazildi", flush=True)
+print(f"\nkat basina dis AUC:")
+p = son.pivot_table(index="kat", columns="kol", values="auc")
+print(p.round(4).to_string())
+print("\nsonuclar/sonuc_bn.csv yazildi", flush=True)
