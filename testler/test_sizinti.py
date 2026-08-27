@@ -90,18 +90,29 @@ def test_olcum_kumeleri_etiket_dengeli(mf):
 
 
 # ------------------------------------------------------- 3. uyarlama ciktisi ayrik
-def test_uyarlama_ciktisi_degerlendirme_hastalarindan():
-    """uyarla.py ciktisi: degerlendirme hastalari uyarlamada kullanilmamis olmali."""
+def test_uyarlama_ciktisi_sizintisiz():
+    """uyarla.py: uyarlama hastalari ile degerlendirme hastalari kesismemeli."""
     yol = KOK / "sonuclar/uyarlama_merkez0.csv"
     if not yol.exists():
         pytest.skip("uyarla.py henuz calistirilmamis")
     d = pd.read_csv(yol)
-    mf = KOK / "modeller/kat0_tohum42.json"
-    if mf.exists():
-        b = json.loads(mf.read_text())["bolunme"]
-        # uyarla.py dis test merkezini hedef alir; degerlendirme hastalari kaydedilmis
-        assert d.hasta.nunique() > 0
-        assert set(d.etiket.unique()) == {0, 1}, "degerlendirme kumesi iki sinif icermeli"
+    assert "rol" in d.columns, "cikti 'rol' sutunu tasimali (uyarla.py guncel mi?)"
+    deg = set(d[d.rol == "degerlendirme"].hasta)
+    uya = set(d[d.rol == "uyarlama"].hasta)
+    assert deg, "degerlendirme kumesi bos"
+    assert uya, "uyarlama kumesi bos"
+    assert not (deg & uya), f"SIZINTI: ayni hasta hem uyarlamada hem degerlendirmede {deg & uya}"
+    assert set(d[d.rol == "degerlendirme"].etiket.unique()) == {0, 1}
+
+
+def test_uyarlama_kumesi_yeterli_buyuklukte():
+    """400 karonun altinda BN uyarlamasi zarar veriyor (docs/06)."""
+    yol = KOK / "sonuclar/uyarlama_merkez0.csv"
+    if not yol.exists():
+        pytest.skip("uyarla.py henuz calistirilmamis")
+    d = pd.read_csv(yol)
+    n = int((d.rol == "uyarlama").sum())
+    assert n >= 400, f"uyarlama kumesi {n} karo; 400 altinda BN uyarlamasi zarar verir"
 
 
 # ----------------------------------------------------------- 4. veri butunlugu

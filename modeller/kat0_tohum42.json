@@ -1,7 +1,7 @@
 {
   "ad": "kat0_tohum42",
-  "olusturuldu": "2026-08-27T13:00:20",
-  "git_commit": "607dbb86b8d8f9433b627ddaeeb799d9452446f9",
+  "olusturuldu": "2026-08-27T13:12:58",
+  "git_commit": "1714254ba6e3e341c0b1aca282a9b2e6f7b97baf",
   "veri": {
     "kaynak": "Camelyon17-WILDS (ayna: wltjr1007/Camelyon17-WILDS)",
     "altkume_sekli": [
@@ -95,22 +95,27 @@
       0.37948280572891235
     ]
   },
+  "esik": {
+    "deger": 0.02283528819680214,
+    "secim": "ic dogrulamada ozgulluk 0,90",
+    "not": "sahada hedef merkezin etiketi yoktur; esik ic veriden secilir"
+  },
   "olcumler": {
     "ic_dogrulama": {
       "auc": 0.9543901234567902,
-      "dogruluk": 0.8044444444444444,
+      "dogruluk": 0.8911111111111111,
       "duyarlilik_ozg90": 0.8822222222222222,
       "brier": 0.15890862047672272
     },
     "dis_dogrulama": {
       "auc": 0.91559012345679,
-      "dogruluk": 0.8044444444444444,
+      "dogruluk": 0.8222222222222222,
       "duyarlilik_ozg90": 0.7355555555555555,
       "brier": 0.17122352123260498
     },
     "dis_test": {
       "auc": 0.9279358024691358,
-      "dogruluk": 0.8422222222222222,
+      "dogruluk": 0.8266666666666667,
       "duyarlilik_ozg90": 0.7955555555555556,
       "brier": 0.13955233991146088
     }
@@ -123,5 +128,5 @@
     "aygit": "mps",
     "platform": "macOS-26.6.2-arm64-arm-64bit"
   },
-  "sure_sn": 111.7
+  "sure_sn": 109.5
 }

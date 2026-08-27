@@ -164,10 +164,12 @@ if len(uyarlama) < 400:
           f"ZARAR verebilir (bkz. docs/06-etiketsiz-uyarlama.md)")
 
 # --- 1. uyarlamasiz ---
+# Esik manifestten gelir: IC dogrulamada secilmistir. Sahadaki varsayilan durum bu,
+# cunku hedef merkezin etiketi elde yoktur. Manifest yoksa 0,5'e duser.
 s0, y0 = skorla(degerlendirme)
-e0 = 0.5
-if manifest.get("olcumler"):
-    pass
+e0 = manifest.get("esik", {}).get("deger") or 0.5
+print(f"karar esigi          : {e0:.4f} "
+      f"({manifest.get('esik', {}).get('secim', 'varsayilan 0,5')})")
 m0 = olc(s0, y0, e0)
 
 # --- 2. BN uyarlamasi ---
@@ -209,7 +211,13 @@ print(f"{'TOPLAM DEGISIM':>28} {son['auc']-m0['auc']:>+8.4f} "
 print("\n(brier'de eksi iyidir: kalibrasyon hatasi azalir)")
 
 cikti = args.cikti or f"sonuclar/uyarlama_merkez{args.merkez}.csv"
-pd.DataFrame(dict(idx=degerlendirme.idx.values, hasta=degerlendirme.patient.values,
-                  etiket=y0, skor_once=s0, skor_sonra=s1)).to_csv(cikti, index=False)
+cerceve = pd.DataFrame(dict(rol="degerlendirme", idx=degerlendirme.idx.values,
+                            hasta=degerlendirme.patient.values, etiket=y0,
+                            skor_once=s0, skor_sonra=s1))
+if len(uyarlama) > 0:   # uyarlama hastalari da yazilir ki sizinti testi dogrulayabilsin
+    cerceve = pd.concat([cerceve, pd.DataFrame(dict(
+        rol="uyarlama", idx=uyarlama.idx.values, hasta=uyarlama.patient.values,
+        etiket=uyarlama.label.values, skor_once=np.nan, skor_sonra=np.nan))])
+cerceve.to_csv(cikti, index=False)
 print(f"\nkaro bazli skorlar -> {cikti}")
 model.load_state_dict(temiz)

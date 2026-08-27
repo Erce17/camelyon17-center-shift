@@ -49,6 +49,7 @@ def kalibrasyon_egrisi(skor, y, kova=10):
 # ---------------------------------------------------------------- 1. kalibrasyon
 sk = pd.read_csv("sonuclar/skorlar_kat0_tohum42.csv")
 uy = pd.read_csv("sonuclar/uyarlama_merkez0.csv")
+uy = uy[uy.rol == "degerlendirme"] if "rol" in uy.columns else uy   # uyarlama satirlari skorsuz
 ic = sk[sk.kume == "ic_dogrulama"]
 
 fig, ax = plt.subplots(figsize=(7.2, 5.4))

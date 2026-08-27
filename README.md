@@ -48,8 +48,6 @@ tek bir sayı vermek yanlış olur.**
 
 ---
 
----
-
 ![kalibrasyon egrisi](gorseller/01_kalibrasyon.png)
 
 Kalibrasyon hatasının **yönü** de ölçüldü: model dış merkezde tümörlere gereğinden
@@ -59,7 +57,11 @@ yanılmıyor, **fazla temkinli davranıp tümörü kaçırıyor** — duyarlıl�
 doğrudan sebebi bu. Etiketsiz uyarlama ortalama tahmini 0,4727'ye, tümör skorunu
 0,90'a taşıyor.
 
-## Üç cümlede sonuç
+Model kendi merkezlerinde de temkinli (iç doğrulamada ortalama tahmin 0,3264);
+dış merkezde bu eğilim derinleşiyor. Yani kayma yeni bir kusur yaratmıyor,
+**var olan bir kusuru büyütüyor.**
+
+## Beş bulguda sonuç
 
 1. **Düşüş var ama AUC'de görünmüyor.** AUC %2,5 kaybederken kalibrasyon %43
    bozuluyor. Sıralama taşınıyor, eşik taşınmıyor.
@@ -116,13 +118,18 @@ hastalarını kendisi ayırır, sızıntı kontrolünü rapora yazar.
 degerlendirme         : 900 karo | hastalar [17, 9, 15]
 uyarlama (ETIKETSIZ)  : 800 karo | hastalar [12, 10, 4, 16]
 sizinti kontrolu      : kesisim 0 hasta (0 olmali)
+karar esigi           : 0.0228 (ic dogrulamada ozgulluk 0,90)
 
                        asama      AUC  dogruluk  duyarlilik    brier
-              1. uyarlamasiz   0.9210    0.7722      0.7644   0.1949
-2. + BN uyarlamasi (etiketsiz)  0.9830    0.9389      0.9600   0.0520
+              1. uyarlamasiz   0.9210    0.8256      0.7644   0.1949
+2. + BN uyarlamasi (etiketsiz)  0.9830    0.9222      0.9600   0.0520
 3. + esik tasima (200 etiketli) 0.9830    0.9378      0.9600   0.0539
-              TOPLAM DEGISIM  +0.0620   +0.1656     +0.1956  -0.1409
+              TOPLAM DEGISIM  +0.0620   +0.1122     +0.1956  -0.1409
 ```
+
+**Karar eşiği manifestten gelir**, iç doğrulamada seçilmiştir: sahada hedef
+merkezin etiketi elde yoktur, dolayısıyla eşik iç veriden seçilmek zorundadır.
+Depodaki bütün ölçümler bu kuralla yapılmıştır.
 
 400 karonun altında BN uyarlaması **zarar verir** ve script bunu uyarı olarak basar.
 
@@ -142,9 +149,11 @@ veriyle eğitildi"** sorusunun cevabı budur.
 uv run pytest testler/ -v
 ```
 
-Depo boyunca elle korunan üç kural otomatik teste bağlandı: ayrımın hasta bazında
-olması, uyarlama karolarının değerlendirme hastalarından gelmemesi, ölçüm
-kümelerinin eşit ve dengeli olması. **Elle korunan kural, kod büyüdükçe bozulur.**
+Depo boyunca elle korunan kurallar otomatik teste bağlandı: ayrımın hasta bazında
+olması, dış merkezlerin eğitimde kullanılmamış olması, `uyarla.py`'nin uyarlama ve
+değerlendirme hastalarını gerçekten ayırması, ölçüm kümelerinin eşit ve dengeli
+olması, bir hastanın tek merkeze ait olması, uyarlama kümesinin 400 karo eşiğini
+geçmesi. **Elle korunan kural, kod büyüdükçe bozulur.**
 
 ## Yapı
 
@@ -187,6 +196,7 @@ uv sync
 ./scriptler/indir.sh && ./scriptler/tamamla.sh
 uv run scriptler/00_kesif.py
 uv run scriptler/01_altkume.py && uv run scriptler/01b_dogrula.py
+uv run scriptler/02_pilot.py      # istege bagli: hattin calistigini gormek icin
 uv run scriptler/03_tam.py
 uv run scriptler/04_teshis.py
 uv run scriptler/05_mudahale.py --kol renk_artirma

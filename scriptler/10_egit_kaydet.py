@@ -172,11 +172,15 @@ def egit_kaydet(kat, tohum):
     model.load_state_dict(en_iyi_durum)
 
     # --- karo bazli skorlar: grafikler ve sonraki analizler icin ---
-    kayitlar, olcumler = [], {}
+    kayitlar, olcumler, esik_ic = [], {}, None
     for ad, d in [("ic_dogrulama", ic_dog), ("dis_dogrulama", dis["dis_dogrulama"][0]),
                   ("dis_test", dis["dis_test"][0])]:
         s, y = skorla(d)
-        olcumler[ad] = olc(s, y)
+        if ad == "ic_dogrulama":
+            # Karar esigi IC dogrulamada secilir; sahada hedef merkezin etiketi yoktur.
+            neg = np.sort(s[y == 0])
+            esik_ic = float(neg[min(int(len(neg) * 0.90), len(neg) - 1)])
+        olcumler[ad] = olc(s, y, esik_ic if esik_ic is not None else 0.5)
         kayitlar.append(pd.DataFrame(dict(kume=ad, idx=d.idx.values, merkez=d.center.values,
                                           hasta=d.patient.values, etiket=y, skor=s)))
     skorlar = pd.concat(kayitlar)
@@ -209,6 +213,8 @@ def egit_kaydet(kat, tohum):
                    "tur_gecmisi": tur_gecmisi},
         "normalizasyon": {"kaynak": "yalniz egitim karolari", "ort": ort.tolist(),
                           "std": std.tolist()},
+        "esik": {"deger": esik_ic, "secim": "ic dogrulamada ozgulluk 0,90",
+                 "not": "sahada hedef merkezin etiketi yoktur; esik ic veriden secilir"},
         "olcumler": olcumler,
         "ortam": {"python": platform.python_version(), "torch": torch.__version__,
                   "sklearn": sklearn.__version__, "numpy": np.__version__,
