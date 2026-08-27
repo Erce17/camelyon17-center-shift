@@ -1,0 +1,22 @@
+TAMAM data/test-00000-of-00004.parquet (465 MB)
+TAMAM data/test-00002-of-00004.parquet (529 MB)
+TAMAM data/test-00001-of-00004.parquet (465 MB)
+TAMAM data/train-00000-of-00014.parquet (449 MB)
+TAMAM data/test-00003-of-00004.parquet (529 MB)
+TAMAM data/train-00002-of-00014.parquet (481 MB)
+HATA data/train-00001-of-00014.parquet
+TAMAM data/train-00003-of-00014.parquet (513 MB)
+TAMAM data/train-00004-of-00014.parquet (513 MB)
+TAMAM data/train-00006-of-00014.parquet (481 MB)
+TAMAM data/train-00007-of-00014.parquet (497 MB)
+TAMAM data/train-00008-of-00014.parquet (497 MB)
+HATA data/train-00005-of-00014.parquet
+TAMAM data/train-00009-of-00014.parquet (497 MB)
+HATA data/train-00012-of-00014.parquet
+TAMAM data/train-00013-of-00014.parquet (465 MB)
+HATA data/train-00010-of-00014.parquet
+TAMAM data/validation-00001-of-00003.parquet (529 MB)
+TAMAM data/validation-00002-of-00003.parquet (513 MB)
+HATA data/train-00011-of-00014.parquet
+TAMAM data/validation-00000-of-00003.parquet (513 MB)
+HEPSI BITTI

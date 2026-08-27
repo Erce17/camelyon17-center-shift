@@ -1,0 +1,30 @@
+aygit: mps
+ic dogrulamaya ayrilan hastalar: [4, 16, 64, 66, 80, 92]
+                    egitim: 30,000 karo | 20 hasta | tumor %50.0
+              ic dogrulama:  2,612 karo |  6 hasta | tumor %50.0
+  dis dogrulama (merkez 1): 30,000 karo |  8 hasta | tumor %50.0
+       dis test (merkez 2): 29,999 karo |  9 hasta | tumor %50.0
+
+normalizasyon (yalniz egitimden): ort=[0.364 0.364 0.364] std=[0.427 0.348 0.379]
+
+==========================================================================
+EGITIM
+==========================================================================
+tur 1: kayip 0.1175 | ic dogrulama AUC 0.9570 dogruluk 0.8515
+tur 2: kayip 0.0604 | ic dogrulama AUC 0.9565 dogruluk 0.7469
+tur 3: kayip 0.0463 | ic dogrulama AUC 0.8609 dogruluk 0.6658
+tur 4: kayip 0.0354 | ic dogrulama AUC 0.9545 dogruluk 0.7925
+tur 5: kayip 0.0300 | ic dogrulama AUC 0.9302 dogruluk 0.6907
+
+secilen model: ic dogrulama AUC 0.9570
+
+==========================================================================
+SONUCLAR
+==========================================================================
+                      kume     AUC  dogruluk  duy@ozg90   brier
+      ic dogrulama (0,3,4)  0.9570    0.8515     0.8951  0.1098
+  dis dogrulama (merkez 1)  0.9741    0.8916     0.9371  0.0853
+       dis test (merkez 2)  0.9686    0.8477     0.9245  0.1159
+
+FARK (ic - dis test): -0.0116 AUC
+sonuc_pilot.csv yazildi

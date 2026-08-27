@@ -1,0 +1,50 @@
+ornek: 20,000 karo | merkez basina [4000, 4000, 4000, 4000, 4000]
+egitim 14,902 karo / 28 hasta | test 5,098 karo / 15 hasta
+
+==========================================================================
+A) MERKEZ BASINA RENK ISTATISTIKLERI
+==========================================================================
+ merkez   R ort   G ort   B ort   R std   G std   B std
+      0  0.7322  0.6008  0.6985  0.1456  0.1751  0.1320
+      1  0.6092  0.4604  0.5922  0.1453  0.1684  0.1313
+      2  0.6740  0.4852  0.7404  0.1467  0.1657  0.1016
+      3  0.6852  0.4888  0.6192  0.1480  0.1592  0.1219
+      4  0.8001  0.6716  0.8194  0.1087  0.1295  0.0925
+
+merkezler arasi en buyuk ortalama farki: 0.2272 (kanal: b)
+
+==========================================================================
+B) SADECE 6 SAYIDAN MERKEZ TAHMINI (lojistik regresyon)
+==========================================================================
+test dogrulugu: 0.8605   (sans seviyesi 0.2000)
+karisiklik matrisi (satir gercek, sutun tahmin):
+     m0   m1    m2   m3   m4
+m0  536   29     0  243    3
+m1  118  772     0    1    0
+m2    4    8  1889    1   45
+m3  120  105     0  412    0
+m4    1    1    30    2  778
+
+==========================================================================
+C) CNN MERKEZ SINIFLANDIRICISI
+==========================================================================
+tur 1: kayip 0.2507 | test dogrulugu 0.9288
+tur 2: kayip 0.0330 | test dogrulugu 0.9339
+tur 3: kayip 0.0115 | test dogrulugu 0.9341
+tur 4: kayip 0.0062 | test dogrulugu 0.9445
+
+CNN test dogrulugu: 0.9445
+karisiklik matrisi (satir gercek, sutun tahmin):
+     m0   m1    m2   m3   m4
+m0  697    8     0  106    0
+m1   13  873     0    5    0
+m2    0    0  1943    0    4
+m3  120   18     1  498    0
+m4    0    0     8    0  804
+
+==========================================================================
+HUKUM
+==========================================================================
+sans 0.2000 | 6 sayi (renk) 0.8605 | CNN (goruntu) 0.9445
+CNN'in renk uzerine kattigi: +0.0840
+sonuc_teshis.csv yazildi

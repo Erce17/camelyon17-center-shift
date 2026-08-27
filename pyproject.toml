@@ -1,0 +1,16 @@
+[project]
+name = "camelyon17-center-shift"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "huggingface-hub>=1.28.0",
+    "matplotlib>=3.11.1",
+    "pandas>=3.0.5",
+    "pyarrow>=25.0.1",
+    "scikit-learn>=1.9.0",
+    "torch>=2.13.0",
+    "torchvision>=0.28.0",
+    "wilds>=2.0.0",
+]
