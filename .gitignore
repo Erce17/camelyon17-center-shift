@@ -14,3 +14,6 @@ veri/
 *.npy
 metadata.parquet
 *.parquet
+
+# Model agirliklari: buyuk ve uretilebilir. Manifest (.json) depoda kalir.
+modeller/*.pt

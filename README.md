@@ -50,6 +50,15 @@ tek bir sayı vermek yanlış olur.**
 
 ---
 
+![kalibrasyon egrisi](gorseller/01_kalibrasyon.png)
+
+Kalibrasyon hatasının **yönü** de ölçüldü: model dış merkezde tümörlere gereğinden
+**düşük** olasılık veriyor. Ortalama tahmini 0,2738 iken gerçek tümör oranı 0,50;
+tümör karolarına verdiği ortalama skor 0,53'te kalıyor. Yani fazla emin biçimde
+yanılmıyor, **fazla temkinli davranıp tümörü kaçırıyor** — duyarlılık düşüşünün
+doğrudan sebebi bu. Etiketsiz uyarlama ortalama tahmini 0,4727'ye, tümör skorunu
+0,90'a taşıyor.
+
 ## Üç cümlede sonuç
 
 1. **Düşüş var ama AUC'de görünmüyor.** AUC %2,5 kaybederken kalibrasyon %43
@@ -68,6 +77,12 @@ tek bir sayı vermek yanlış olur.**
    kalibrasyon açığının **%98,7'sini** kapatıyor. Ama 100 karoyla denendiğinde
    her metrikte zarar veriyor: **gürültülü istatistik, sağlam olandan beterdir.**
 
+![acigin kapanmasi](gorseller/03_acik.png)
+
+Ama her merkezde işe yaramıyor:
+
+![kat bazinda auc](gorseller/02_kat_auc.png)
+
 ---
 
 ## Ayrıntılar
@@ -83,13 +98,65 @@ tek bir sayı vermek yanlış olur.**
 
 ---
 
+## Yeni bir merkeze uyarlama
+
+Bu deponun ürün girişi `uyarla.py`. Senaryo: eğitilmiş bir model var, yeni bir
+hastaneye kurulum yapılıyor.
+
+```bash
+python uyarla.py --model modeller/kat0_tohum42.pt --merkez 0
+python uyarla.py --model modeller/kat0_tohum42.pt --merkez 0 --etiketli 200
+```
+
+İki müdahale uygulanır, ikisi de modeli **yeniden eğitmez**: etiketsiz BatchNorm
+uyarlaması, ve isteğe bağlı eşik taşıma. Script değerlendirme ve uyarlama
+hastalarını kendisi ayırır, sızıntı kontrolünü rapora yazar.
+
+```
+degerlendirme         : 900 karo | hastalar [17, 9, 15]
+uyarlama (ETIKETSIZ)  : 800 karo | hastalar [12, 10, 4, 16]
+sizinti kontrolu      : kesisim 0 hasta (0 olmali)
+
+                       asama      AUC  dogruluk  duyarlilik    brier
+              1. uyarlamasiz   0.9210    0.7722      0.7644   0.1949
+2. + BN uyarlamasi (etiketsiz)  0.9830    0.9389      0.9600   0.0520
+3. + esik tasima (200 etiketli) 0.9830    0.9378      0.9600   0.0539
+              TOPLAM DEGISIM  +0.0620   +0.1656     +0.1956  -0.1409
+```
+
+400 karonun altında BN uyarlaması **zarar verir** ve script bunu uyarı olarak basar.
+
+## Model artefaktları ve manifest
+
+`10_egit_kaydet.py` kalıcı artefakt üretir: ağırlıklar (`modeller/*.pt`, depoya
+girmez), **manifest** (`modeller/*.json`) ve karo bazlı skorlar.
+
+Manifest şunları tutar: git commit'i, alt kümenin sha256 özeti, hangi merkez ve
+hangi hastaların hangi kümede olduğu, bütün eğitim parametreleri, tur tur geçmiş,
+seçilen tur, ölçümler ve kütüphane sürümleri. Üç ay sonra gelen **"bu model hangi
+veriyle eğitildi"** sorusunun cevabı budur.
+
+## Testler
+
+```bash
+uv run pytest testler/ -v
+```
+
+Depo boyunca elle korunan üç kural otomatik teste bağlandı: ayrımın hasta bazında
+olması, uyarlama karolarının değerlendirme hastalarından gelmemesi, ölçüm
+kümelerinin eşit ve dengeli olması. **Elle korunan kural, kod büyüdükçe bozulur.**
+
 ## Yapı
 
 ```
-scriptler/   00_kesif -> 06_karsilastir, sirayla calisir
+uyarla.py    URUN GIRISI: yeni hastane -> uyarlanmis model + rapor
+scriptler/   00_kesif -> 11_grafik, sirayla calisir
 docs/        ayrintili notlar
+modeller/    agirliklar (.pt, depoya girmez) + manifest (.json)
+gorseller/   grafikler
 sonuclar/    csv ciktilari
 loglar/      kosu ciktilari
+testler/     sizinti testleri
 izle.sh      arka planda kosan mudahaleyi canli izler
 ```
 
@@ -107,6 +174,8 @@ izle.sh      arka planda kosan mudahaleyi canli izler
 | `07_teshis2.py` | Gri görüntüden merkez tahmini, odak ve keskinlik istatistikleri |
 | `08_kalibrasyon.py` | Hedef merkezden N örnekle eşik/olasılık yeniden ayarı |
 | `09_bn_uyarlama.py` | Etiketsiz BatchNorm uyarlaması |
+| `10_egit_kaydet.py` | Model ağırlıkları + manifest + karo bazlı skorlar |
+| `11_grafik.py` | Kalibrasyon eğrisi, kat bazlı AUC, açık kapanma grafikleri |
 
 Model: ImageNet ön eğitimli ResNet-18, son katman tek çıkışlı, tüm ağ eğitiliyor.
 Aygıt: Apple MPS. Bir koşu ~111 saniye, 15 koşu ~28 dakika.
@@ -126,6 +195,9 @@ uv run scriptler/06_karsilastir.py
 uv run scriptler/07_teshis2.py
 uv run scriptler/08_kalibrasyon.py
 uv run scriptler/09_bn_uyarlama.py
+uv run scriptler/10_egit_kaydet.py --kat 0 --tohum 42
+uv run scriptler/11_grafik.py
+uv run pytest testler/
 ```
 
 Scriptler kök dizinden çalıştırılır; veri yollarıyla çıktı yolları buna göre kurulu.

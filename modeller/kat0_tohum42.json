@@ -1,0 +1,127 @@
+{
+  "ad": "kat0_tohum42",
+  "olusturuldu": "2026-08-27T13:00:20",
+  "git_commit": "607dbb86b8d8f9433b627ddaeeb799d9452446f9",
+  "veri": {
+    "kaynak": "Camelyon17-WILDS (ayna: wltjr1007/Camelyon17-WILDS)",
+    "altkume_sekli": [
+      149997,
+      96,
+      96,
+      3
+    ],
+    "altkume_ozeti_sha256": "81b8051bb5d6c5abc0fcbf150913d80acf18d5c7d2004d34d83c93e5a3203245",
+    "toplam_karo": 149997
+  },
+  "bolunme": {
+    "kat": 0,
+    "tohum": 42,
+    "egitim_merkezleri": [
+      2,
+      3,
+      4
+    ],
+    "dis_dogrulama_merkezi": 1,
+    "dis_test_merkezi": 0,
+    "ic_dogrulama_hastalari": [
+      42,
+      75,
+      96
+    ],
+    "dis_dogrulama_hastalari": [
+      38,
+      36,
+      22
+    ],
+    "dis_test_hastalari": [
+      9,
+      15,
+      12
+    ],
+    "egitim_karo": 28413,
+    "ic_dogrulama_karo": 900,
+    "dis_test_karo": 900
+  },
+  "egitim": {
+    "mimari": "resnet18",
+    "on_egitim": "IMAGENET1K_V1",
+    "optimizer": "Adam",
+    "lr": 0.0001,
+    "weight_decay": 0.0001,
+    "yigin": 128,
+    "tur": 5,
+    "secilen_tur": 3,
+    "model_secim_olcutu": "ic_dogrulama_auc",
+    "artirma": "yatay+dikey cevirme",
+    "renk_artirma": false,
+    "tur_gecmisi": [
+      {
+        "tur": 1,
+        "kayip": 0.12016648901396038,
+        "ic_auc": 0.9263160493827161
+      },
+      {
+        "tur": 2,
+        "kayip": 0.05858275474347136,
+        "ic_auc": 0.9417432098765433
+      },
+      {
+        "tur": 3,
+        "kayip": 0.042361020266603815,
+        "ic_auc": 0.9543901234567902
+      },
+      {
+        "tur": 4,
+        "kayip": 0.034405481603316634,
+        "ic_auc": 0.9418962962962963
+      },
+      {
+        "tur": 5,
+        "kayip": 0.028527096228359583,
+        "ic_auc": 0.8944395061728395
+      }
+    ]
+  },
+  "normalizasyon": {
+    "kaynak": "yalniz egitim karolari",
+    "ort": [
+      0.36408889293670654,
+      0.36408889293670654,
+      0.36408889293670654
+    ],
+    "std": [
+      0.382243812084198,
+      0.28393763303756714,
+      0.37948280572891235
+    ]
+  },
+  "olcumler": {
+    "ic_dogrulama": {
+      "auc": 0.9543901234567902,
+      "dogruluk": 0.8044444444444444,
+      "duyarlilik_ozg90": 0.8822222222222222,
+      "brier": 0.15890862047672272
+    },
+    "dis_dogrulama": {
+      "auc": 0.91559012345679,
+      "dogruluk": 0.8044444444444444,
+      "duyarlilik_ozg90": 0.7355555555555555,
+      "brier": 0.17122352123260498
+    },
+    "dis_test": {
+      "auc": 0.9279358024691358,
+      "dogruluk": 0.8422222222222222,
+      "duyarlilik_ozg90": 0.7955555555555556,
+      "brier": 0.13955233991146088
+    }
+  },
+  "ortam": {
+    "python": "3.12.13",
+    "torch": "2.13.0",
+    "sklearn": "1.9.0",
+    "numpy": "2.5.2",
+    "aygit": "mps",
+    "platform": "macOS-26.6.2-arm64-arm-64bit"
+  },
+  "sure_sn": 111.7
+}

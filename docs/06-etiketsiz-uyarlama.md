@@ -70,6 +70,29 @@ almadan, ~800 ham karoyla:
 Bunu "model dış merkezde daha iyi" diye okumak yanlış olur: iç doğrulama kümesinin
 de kendi zorluğu var ve 3 hastalık ölçümlerde bu sapma normal.
 
+## Kalibrasyon hatasının yönü
+
+Brier'in bozulması "model yanlış" der ama yönünü söylemez. Reliability diagram
+söyler:
+
+```
+            ic dogrulama: ort tahmin 0.3264 | gercek oran 0.5000
+   dis test, uyarlamasiz: ort tahmin 0.2738 | gercek oran 0.5000
+    dis test, BN sonrasi: ort tahmin 0.4727 | gercek oran 0.5000
+
+TUMOR karolarina verilen ortalama skor:
+   uyarlamasiz: tumor 0.5290 | temiz 0.0185
+    BN sonrasi: tumor 0.9029 | temiz 0.0425
+```
+
+Model dış merkezde **gereğinden düşük** olasılık veriyor. Tümör karolarına verdiği
+ortalama skor 0,53'te kalıyor: tümörü görüyor ama emin olamıyor, ve eşiğin altında
+kalanları kaçırıyor. **Fazla emin biçimde yanılmıyor, fazla temkinli davranıp
+tümörü kaçırıyor** — duyarlılık düşüşünün doğrudan sebebi bu.
+
+Etiketsiz uyarlama ortalama tahmini 0,4727'ye (gerçek oran 0,50), tümör skorunu
+0,90'a taşıyor. Grafik: [`gorseller/01_kalibrasyon.png`](../gorseller/01_kalibrasyon.png)
+
 ## ⚠️ Üç uyarı, sonucun kendisi kadar önemli
 
 **1. Az veriyle felaket.** `bn100` her metrikte tabandan kötü; Brier %311
